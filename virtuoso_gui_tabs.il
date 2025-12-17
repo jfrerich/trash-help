@@ -58,7 +58,7 @@ procedure( runExternalScript(scriptPath statusField logField)
 ) ; end procedure
 
 procedure( createTwoTabGUI()
-  let( (myForm tabWidget tab1 tab2 mainLayout scriptPathField statusField logField)
+  let( (myForm tabField tab1Fields tab2Fields)
 
     ; Create the main form
     myForm = hiCreateAppForm(
@@ -67,101 +67,68 @@ procedure( createTwoTabGUI()
       ?callback list("hiFormDone(hiGetCurrentForm())")
     )
 
-    ; Create the tab widget
-    tabWidget = hiCreateTabWidget(
+    ; Define Tab 1 fields (Script Runner)
+    tab1Fields = list(
+      hiCreateLabel(
+        ?name 'tab1Label
+        ?labelText "Script Runner"
+      )
+      hiCreateStringField(
+        ?name 'scriptPathField
+        ?prompt "Script Path:"
+        ?value ""
+      )
+      hiCreateButton(
+        ?name 'runScriptButton
+        ?buttonText "Run Script"
+        ?callback "runExternalScript(hiGetCurrentForm()->scriptPathField->value hiGetCurrentForm()->statusField hiGetCurrentForm()->logField)"
+      )
+      hiCreateStringField(
+        ?name 'statusField
+        ?prompt "Status:"
+        ?value "Not Run"
+        ?editable nil
+      )
+      hiCreateLabel(
+        ?name 'logLabel
+        ?labelText "Script Output Log:"
+      )
+      hiCreateMLTextField(
+        ?name 'logField
+        ?value "No script has been run yet."
+        ?editable nil
+      )
+      hiCreateButton(
+        ?name 'clearLogButton
+        ?buttonText "Clear Log"
+        ?callback "hiGetCurrentForm()->logField->value = \"Log cleared.\n\""
+      )
+    )
+
+    ; Define Tab 2 fields
+    tab2Fields = list(
+      hiCreateLabel(
+        ?name 'tab2Label
+        ?labelText "This is Tab 2"
+      )
+      hiCreateStringField(
+        ?name 'tab2Field
+        ?prompt "Enter value:"
+        ?value ""
+      )
+      hiCreateButton(
+        ?name 'tab2Button
+        ?buttonText "Submit Tab 2"
+        ?callback "println(\"Tab 2 button clicked!\")"
+      )
+    )
+
+    ; Create the tab field with two tabs
+    tabField = hiCreateTabField(
       ?name 'mainTabs
+      ?choices list("Tab 1" "Tab 2")
+      ?fields list(tab1Fields tab2Fields)
       ?parent myForm
-    )
-
-    ; Create Tab 1
-    tab1 = hiCreateTab(
-      ?name 'tab1
-      ?label "Tab 1"
-      ?parent tabWidget
-    )
-
-    ; Add content to Tab 1
-    hiCreateLabel(
-      ?name 'tab1Label
-      ?labelText "This is Tab 1"
-      ?parent tab1
-    )
-
-    ; Field to enter script path
-    scriptPathField = hiCreateStringField(
-      ?name 'scriptPathField
-      ?prompt "Script Path:"
-      ?value ""
-      ?parent tab1
-    )
-
-    ; Button to run the external script
-    hiCreateButton(
-      ?name 'runScriptButton
-      ?buttonText "Run Script"
-      ?callback "runExternalScript(hiGetCurrentForm()->scriptPathField->value hiGetCurrentForm()->statusField hiGetCurrentForm()->logField)"
-      ?parent tab1
-    )
-
-    ; Status field to show PASS/FAIL
-    statusField = hiCreateStringField(
-      ?name 'statusField
-      ?prompt "Status:"
-      ?value "Not Run"
-      ?editable nil
-      ?parent tab1
-    )
-
-    hiCreateLabel(
-      ?name 'logLabel
-      ?labelText "Script Output Log:"
-      ?parent tab1
-    )
-
-    ; Multi-line text field for script output log
-    logField = hiCreateMLTextField(
-      ?name 'logField
-      ?value "No script has been run yet."
-      ?editable nil
-      ?rows 15
-      ?columns 80
-      ?parent tab1
-    )
-
-    ; Button to clear the log
-    hiCreateButton(
-      ?name 'clearLogButton
-      ?buttonText "Clear Log"
-      ?callback "hiGetCurrentForm()->logField->value = \"Log cleared.\n\""
-      ?parent tab1
-    )
-
-    ; Create Tab 2
-    tab2 = hiCreateTab(
-      ?name 'tab2
-      ?label "Tab 2"
-      ?parent tabWidget
-    )
-
-    ; Add content to Tab 2
-    hiCreateLabel(
-      ?name 'tab2Label
-      ?labelText "This is Tab 2"
-      ?parent tab2
-    )
-
-    hiCreateStringField(
-      ?name 'tab2Field
-      ?prompt "Enter value:"
-      ?value ""
-      ?parent tab2
-    )
-
-    hiCreateButton(
-      ?name 'tab2Button
-      ?buttonText "Submit Tab 2"
-      ?callback "println(\"Tab 2 button clicked!\")"
-      ?parent tab2
     )
 
     ; Create OK and Cancel buttons at the bottom
